@@ -52,7 +52,7 @@ function Login() {
           className={styles.logo}
         />
       </div>
-      <h1 className={styles.title}>Bedelia</h1>
+      <h1 className={styles.title}>Inicia Sesión</h1>
       <form className={styles.login_form} onSubmit={handleSubmit}>
         <input
           type="email"
@@ -70,8 +70,8 @@ function Login() {
         <br />
         <button type="submit" className={styles.login_button}>Login</button>
       </form>
-      <p className={styles.signup_text}>
-        Create account <a href="/signup" className={styles.signup_link}>here</a>
+      <p className={styles.login_text}>
+        Create account <a href="/register" className={styles.login_link}>here</a>
       </p>
     </div>
     </>
