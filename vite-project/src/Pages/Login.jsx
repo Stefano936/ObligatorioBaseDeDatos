@@ -43,6 +43,7 @@ function Login() {
   }
 
   return (
+    <>
     <div className={styles.login_container}>
       <div className={styles.logo_container}>
         <img 
@@ -73,6 +74,7 @@ function Login() {
         Create account <a href="/signup" className={styles.signup_link}>here</a>
       </p>
     </div>
+    </>
   );
 }
 
