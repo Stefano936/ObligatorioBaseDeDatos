@@ -7,6 +7,8 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [birthday, setBirthday] = useState('');
+  const [telephone, setTelephone] = useState('');
+  const [ci, setCi] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
@@ -71,6 +73,22 @@ const Register = () => {
       {success && <p className={styles.success}>Cuenta creada exitosamente.</p>}
       <form className={styles.form} onSubmit={handleSubmit}>
         <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Nombre de usuario"
+          className={styles.input}
+          required
+        />
+        <input
+          type = "text"
+          value = {ci}
+          onChange = {(e) => setCi(e.target.value)}
+          placeholder = "Cédula de identidad"
+          className = {styles.input}
+          required
+        />
+        <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -87,11 +105,11 @@ const Register = () => {
           required
         />
         <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Nombre de usuario"
-          className={styles.input}
+          type = "text"
+          value = {telephone}
+          onChange = {(e) => setTelephone(e.target.value)}
+          placeholder = "Teléfono"
+          className = {styles.input}
           required
         />
         <input
