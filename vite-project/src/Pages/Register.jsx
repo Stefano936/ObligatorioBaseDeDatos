@@ -6,6 +6,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [birthday, setBirthday] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
@@ -91,6 +92,14 @@ const Register = () => {
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Nombre de usuario"
           className={styles.input}
+          required
+        />
+        <input
+          type = "date"
+          value = {birthday}
+          onChange = {(e) => setBirthday(e.target.value)}
+          placeholder = "Fecha de nacimiento"
+          className = {styles.input}
           required
         />
         <button type="submit" className={styles.button}>Registrar</button>
