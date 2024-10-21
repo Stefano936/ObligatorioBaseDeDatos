@@ -49,13 +49,19 @@ function Activities () {
       </div>
 
       <h3>Equipamiento para alquilar</h3>
-      <div>
-        <button onClick={() => handleEquipment('Antiparras')}>Antiparras</button>
-        <button onClick={() => handleEquipment('Cascos')}>Cascos</button>
-        <button onClick={() => handleEquipment('Tablas de Snowboard')}>Tablas de Snowboard</button>
-        <button onClick={() => handleEquipment('Esquíes')}>Esquíes</button>
-      </div>
-
+      <form>
+        <label>
+          <input type="checkbox" value="Antiparras" checked={equipment.includes('Antiparras')} onChange={() => handleEquipment('Antiparras')} />
+          Antiparras
+          <input type="checkbox" value="Cascos" checked={equipment.includes('Cascos')} onChange={() => handleEquipment('Cascos')} />
+          Cascos
+          <input type="checkbox" value="Tablas de Snowboard" checked={equipment.includes('Tablas de Snowboard')} onChange={() => handleEquipment('Tablas de Snowboard')} />
+          Tablas de Snowboard
+          <input type="checkbox" value="Esquíes" checked={equipment.includes('Esquíes')} onChange={() => handleEquipment('Esquíes')} />
+          Esquíes
+        </label>
+      </form>
+      
       <h3>Clase</h3>
       <form>
         <label>
