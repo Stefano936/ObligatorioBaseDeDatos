@@ -5,6 +5,8 @@ import Activities from './Pages/Activities';
 import Alumnos from './Pages/Alumnos';
 import Instructores from './Pages/Instructores';
 import Equipamiento from './Pages/Equipamiento';
+import Horarios from './Pages/Horarios';
+import Clases from './Pages/Clases';
 import './App.css';
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
         <Route path="/alumnos" element={<Alumnos />} />
         <Route path="/instructores" element={<Instructores />} />
         <Route path="/equipamiento" element={<Equipamiento />} />
+        <Route path="/horarios" element={<Horarios />} />
+        <Route path="/clases" element={<Clases />} />
       </Routes>
     </Router>
   );
