@@ -2,17 +2,36 @@ import React, { useState } from 'react';
 import styles from '../../Styles/AgregarAlumnoModal.module.css'
 
 const AgregarAlumnoModal = ({ closeModal }) => {
-    const [cedula, setCedula] = useState('');
+    const [ci, setCi] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
-    const [fechaNacimiento, setFechaNacimiento] = useState('');
+    const [fecha_nacimiento, setFechaNacimiento] = useState('');
     const [telefono, setTelefono] = useState('');
     const [correo, setCorreo] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        closeModal();
-    }
+        console.log(fecha_nacimiento);
+        fetch('http://localhost:8000/alumnos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ci,
+                nombre,
+                apellido,
+                fecha_nacimiento,
+                telefono,
+                correo
+            })
+        }).then(() => {
+            closeModal();
+            window.location.reload();
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+    } 
 
     return (
         <div className={styles.overlay}>
@@ -22,7 +41,7 @@ const AgregarAlumnoModal = ({ closeModal }) => {
                     <div className={styles.input}>
                         <label>Cédula de identidad</label>
                         <div>
-                            <input type="text" placeholder="Cédula de identidad..." value={cedula} onChange={(e) => setCedula(e.target.value)} />
+                            <input type="text" placeholder="Cédula de identidad..." value={ci} onChange={(e) => setCi(e.target.value)} />
                         </div>
                     </div>
                     <div className={styles.input}>
@@ -40,7 +59,14 @@ const AgregarAlumnoModal = ({ closeModal }) => {
                     <div className={styles.input}>
                         <label>Fecha de nacimiento</label>
                         <div>
-                            <input type="text" placeholder="Cédula de identidad" value={fechaNacimiento} onChange={(e) => setFechaNacimiento(e.target.value)} />
+                        <input 
+                            type="date" 
+                            placeholder="Fecha de nacimiento" 
+                            value={fecha_nacimiento} 
+                            onChange={(e) => {
+                                setFechaNacimiento(e.target.value);
+                            }} 
+                        />
                         </div>
                     </div>
                     <div className={styles.input}>

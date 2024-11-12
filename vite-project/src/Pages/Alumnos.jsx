@@ -16,14 +16,18 @@ const Alumnos = () => {
     };
 
     useEffect(() => {
-        const mockStudents = [
-          { cedula: '', nombre: 'Carlos', apellido: 'Perez', fechaNacimiento: '10/10/2000', telefono: '098123456', correo: 'carlosperez@ejemplo.com' },
-          { cedula: '', nombre: 'María', apellido: 'Sánchez', fechaNacimiento: '11/05/2004', telefono: '098765432', correo: 'mariasanchez@ejemplo.com' },
-          { cedula: '', nombre: 'Juan', apellido: 'Rodriguez', fechaNacimiento: '03/04/2002', telefono: '098098098', correo: 'juanrodriguez@ejemplo.com' },
-        ];
-        
-        setStudents(mockStudents);
-      }, []);
+        const fetchData = async () => {
+        try {
+            const alumnosResponse = await fetch('http://localhost:8000/alumnos');
+            const alumnosData = await alumnosResponse.json();
+            setStudents(alumnosData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+    
+    fetchData();
+    }, []);
 
     return (
         <div className={styles.alumnosContainer}>
