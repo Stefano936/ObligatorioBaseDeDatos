@@ -72,6 +72,7 @@ function Activities() {
         <div>
           <label htmlFor="actividades">Selecciona una actividad:</label>
           <select id="actividades" name="actividades" onChange={handleActivityChange}>
+            <option value="" selected disable>Selecciona una opción...</option>
             {activities.map((act, index) => (
               <option key={index} value={act.descripcion}>{act.descripcion} - ${act.costo}</option>
             ))}
