@@ -9,14 +9,13 @@ const Alumnos = () => {
     const handleAbrirModal = (e) => {
         e.preventDefault();
         setActiveAgregar(true);
-    }
+    };
 
     const closeModal = () => {
         setActiveAgregar(false);
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
+    const fetchData = async () => {
         try {
             const alumnosResponse = await fetch('http://localhost:8000/alumnos');
             const alumnosData = await alumnosResponse.json();
@@ -25,8 +24,9 @@ const Alumnos = () => {
             console.error('Error fetching data:', error);
         }
     };
-    
-    fetchData();
+
+    useEffect(() => {
+        fetchData();
     }, []);
 
     return (
@@ -34,17 +34,17 @@ const Alumnos = () => {
             <h2>Alumnos</h2>
             <button onClick={handleAbrirModal}>Agregar alumno</button>
 
-            {activeAgregar && <AgregarAlumnoModal closeModal={closeModal} />}
+            {activeAgregar && <AgregarAlumnoModal closeModal={closeModal} fetchData={fetchData} />}
 
             <ul>
                 {students.map((student, index) => (
-                <li key={index} className={styles.alumnoCard}>
-                    {student.nombre} {student.apellido}
-                </li>
+                    <li key={index} className={styles.alumnoCard}>
+                        {student.nombre} {student.apellido}
+                    </li>
                 ))}
             </ul>
         </div>
     );
-}
+};
 
 export default Alumnos;
