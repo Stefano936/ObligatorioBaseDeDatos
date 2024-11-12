@@ -22,9 +22,13 @@ function Activities() {
     <div className={styles.activitiesContainer}>
       <h2>Actividades</h2>
       <div>
-        {activities.map((act, index) => (
-          <p key={index}>{act.descripcion}</p>
-        ))}
+        <label htmlFor="actividades">Selecciona una actividad:</label>
+        <select id="actividades" name="actividades">
+          {activities.map((act, index) => (
+            <option key={index} value={act.descripcion}>{act.descripcion}</option>
+          ))}
+        </select>
+        
       </div>
     </div>
   );
