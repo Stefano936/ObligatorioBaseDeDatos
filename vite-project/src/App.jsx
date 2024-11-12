@@ -13,15 +13,15 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/Login"/>}/>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/inscripciones" element={<Activities />} />
-        <Route path="/alumnos" element={<Alumnos />} />
-        <Route path="/instructores" element={<Instructores />} />
-        <Route path="/equipamiento" element={<Equipamiento />} />
-        <Route path="/horarios" element={<Horarios />} />
-        <Route path="/clases" element={<Clases />} />
+        <Route path="/" element={<Navigate to="/Login"/>}/> // Redirect to Login
+        <Route path="/login" element={<Login />} /> // Login page
+        <Route path="/register" element={<Register />} /> // Register page
+        <Route path="/inscripciones" element={<Activities />} /> // Activities page
+        <Route path="/alumnos" element={<Alumnos />} /> // Accede solo admin para modificar eso
+        <Route path="/instructores" element={<Instructores />} /> // Accede solo admin para modificar eso
+        <Route path="/equipamiento" element={<Equipamiento />} /> // Accede solo admin para modificar eso
+        <Route path="/horarios" element={<Horarios />} /> // Accede solo admin para modificar eso
+        <Route path="/clases" element={<Clases />} /> // Accede solo admin para modificar eso
       </Routes>
     </Router>
   );
