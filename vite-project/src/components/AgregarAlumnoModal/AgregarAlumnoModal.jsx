@@ -1,19 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../../Styles/AgregarAlumnoModal.module.css';
 
-const AgregarAlumnoModal = ({ closeModal, fetchData }) => {
+const AgregarAlumnoModal = ({ closeModal, fetchData, student }) => {
     const [ci, setCi] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
     const [fecha_nacimiento, setFechaNacimiento] = useState('');
     const [telefono, setTelefono] = useState('');
     const [correo, setCorreo] = useState('');
-    const [ciToDelete, setCiToDelete] = useState('');
+
+    useEffect(() => {
+        if (student) {
+            setCi(student.ci);
+            setNombre(student.nombre);
+            setApellido(student.apellido);
+            setFechaNacimiento(student.fecha_nacimiento);
+            setTelefono(student.telefono);
+            setCorreo(student.correo);
+        }
+    }, [student]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetch('http://localhost:8000/alumnos', {
-            method: 'POST',
+        const method = student ? 'PUT' : 'POST';
+        const url = student ? `http://localhost:8000/alumnos/${student.ci}` : 'http://localhost:8000/alumnos';
+
+        fetch(url, {
+            method,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -33,30 +46,15 @@ const AgregarAlumnoModal = ({ closeModal, fetchData }) => {
         });
     };
 
-    const handleDelete = (e) => {
-        e.preventDefault();
-        fetch(`http://localhost:8000/alumnos/${ciToDelete}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(() => {
-            closeModal();
-            fetchData();
-        }).catch((error) => {
-            console.error('Error:', error);
-        });
-    };
-
     return (
         <div className={styles.overlay}>
             <div className={styles.modal}>
-                <h2 className={styles.title}>Agregar alumno</h2>
+                <h2 className={styles.title}>{student ? 'Editar alumno' : 'Agregar alumno'}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className={styles.input}>
                         <label>Cédula de identidad</label>
                         <div>
-                            <input type="text" placeholder="Cédula de identidad..." value={ci} onChange={(e) => setCi(e.target.value)} />
+                            <input type="text" placeholder="Cédula de identidad..." value={ci} onChange={(e) => setCi(e.target.value)} disabled={!!student} />
                         </div>
                     </div>
                     <div className={styles.input}>
@@ -95,20 +93,8 @@ const AgregarAlumnoModal = ({ closeModal, fetchData }) => {
                         </div>
                     </div>
                     <div className={styles.buttons}>
-                        <button type="submit" className={styles.modalButton}>Register</button>
-                        <button onClick={closeModal} className={`${styles.modalButton} ${styles.cancelButton}`}>Cancel</button>
-                    </div>
-                </form>
-                <h2 className={styles.title}>Eliminar alumno</h2>
-                <form onSubmit={handleDelete}>
-                    <div className={styles.input}>
-                        <label>Cédula de identidad</label>
-                        <div>
-                            <input type="text" placeholder="Cédula de identidad..." value={ciToDelete} onChange={(e) => setCiToDelete(e.target.value)} />
-                        </div>
-                    </div>
-                    <div className={styles.buttons}>
-                        <button type="submit" className={`${styles.modalButton} ${styles.deleteButton}`}>Delete</button>
+                        <button type="submit" className={styles.modalButton}>{student ? 'Actualizar' : 'Registrar'}</button>
+                        <button onClick={closeModal} className={`${styles.modalButton} ${styles.cancelButton}`}>Cancelar</button>
                     </div>
                 </form>
             </div>
