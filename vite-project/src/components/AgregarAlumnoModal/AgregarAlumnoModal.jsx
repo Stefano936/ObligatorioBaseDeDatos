@@ -1,28 +1,60 @@
-import React, { useState } from 'react';
-import styles from '../../Styles/AgregarAlumnoModal.module.css'
+import React, { useState, useEffect } from 'react';
+import styles from '../../Styles/AgregarAlumnoModal.module.css';
 
-const AgregarAlumnoModal = ({ closeModal }) => {
-    const [cedula, setCedula] = useState('');
+const AgregarAlumnoModal = ({ closeModal, fetchData, student }) => {
+    const [ci, setCi] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
-    const [fechaNacimiento, setFechaNacimiento] = useState('');
+    const [fecha_nacimiento, setFechaNacimiento] = useState('');
     const [telefono, setTelefono] = useState('');
     const [correo, setCorreo] = useState('');
 
+    useEffect(() => {
+        if (student) {
+            setCi(student.ci);
+            setNombre(student.nombre);
+            setApellido(student.apellido);
+            setFechaNacimiento(student.fecha_nacimiento);
+            setTelefono(student.telefono);
+            setCorreo(student.correo);
+        }
+    }, [student]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        closeModal();
-    }
+        const method = student ? 'PUT' : 'POST';
+        const url = student ? `http://localhost:8000/alumnos/${student.ci}` : 'http://localhost:8000/alumnos';
+
+        fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ci,
+                nombre,
+                apellido,
+                fecha_nacimiento,
+                telefono,
+                correo
+            })      
+        }).then(() => {
+            closeModal();
+            fetchData();
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+    };
 
     return (
         <div className={styles.overlay}>
             <div className={styles.modal}>
-                <h2 className={styles.title}>Agregar alumno</h2>
+                <h2 className={styles.title}>{student ? 'Editar alumno' : 'Agregar alumno'}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className={styles.input}>
                         <label>Cédula de identidad</label>
                         <div>
-                            <input type="text" placeholder="Cédula de identidad..." value={cedula} onChange={(e) => setCedula(e.target.value)} />
+                            <input type="text" placeholder="Cédula de identidad..." value={ci} onChange={(e) => setCi(e.target.value)} disabled={!!student} />
                         </div>
                     </div>
                     <div className={styles.input}>
@@ -40,7 +72,12 @@ const AgregarAlumnoModal = ({ closeModal }) => {
                     <div className={styles.input}>
                         <label>Fecha de nacimiento</label>
                         <div>
-                            <input type="text" placeholder="Cédula de identidad" value={fechaNacimiento} onChange={(e) => setFechaNacimiento(e.target.value)} />
+                            <input 
+                                type="date" 
+                                placeholder="Fecha de nacimiento" 
+                                value={fecha_nacimiento} 
+                                onChange={(e) => setFechaNacimiento(e.target.value)} 
+                            />
                         </div>
                     </div>
                     <div className={styles.input}>
@@ -56,13 +93,13 @@ const AgregarAlumnoModal = ({ closeModal }) => {
                         </div>
                     </div>
                     <div className={styles.buttons}>
-                        <button type="submit" className={styles.modalButton}>Register</button>
-                        <button onClick={closeModal} className={`${styles.modalButton} ${styles.cancelButton}`}>Cancel</button>
+                        <button type="submit" className={styles.modalButton}>{student ? 'Actualizar' : 'Registrar'}</button>
+                        <button onClick={closeModal} className={`${styles.modalButton} ${styles.cancelButton}`}>Cancelar</button>
                     </div>
                 </form>
             </div>
         </div>
-    )
-}
-;
+    );
+};
+
 export default AgregarAlumnoModal;
