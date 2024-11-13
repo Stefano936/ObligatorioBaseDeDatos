@@ -32,7 +32,7 @@ const Alumnos = () => {
     return (
         <div className={styles.alumnosContainer}>
             <h2>Alumnos</h2>
-            <button onClick={handleAbrirModal}>Agregar alumno</button>
+            <button onClick={handleAbrirModal}>Cambios a Alumnos</button>
 
             {activeAgregar && <AgregarAlumnoModal closeModal={closeModal} fetchData={fetchData} />}
 

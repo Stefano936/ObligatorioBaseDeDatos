@@ -108,7 +108,7 @@ const AgregarAlumnoModal = ({ closeModal, fetchData }) => {
                         </div>
                     </div>
                     <div className={styles.buttons}>
-                        <button type="submit" className={styles.modalButton}>Delete</button>
+                        <button type="submit" className={`${styles.modalButton} ${styles.deleteButton}`}>Delete</button>
                     </div>
                 </form>
             </div>

@@ -1,71 +1,101 @@
-.modal {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 350px;
-    padding: 20px;
-    background-color: rgb(255, 255, 255);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1001;
-    border-radius: 8px;
-    margin-top: 40px;
-}
-
 .overlay {
     position: fixed;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-end; /* Comienza en la parte inferior de la pantalla */
+    justify-content: center;
     z-index: 1000;
+    overflow-y: hidden;
+}
+
+.modal {
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh; /* Limita la altura máxima del modal */
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 10px 10px 0 0; /* Bordes redondeados solo en la parte superior */
+    overflow-y: auto; /* Permite desplazamiento vertical dentro del modal */
+    transition: transform 0.3s ease-in-out;
+}
+
+.modal.show {
+    transform: translateY(0); /* Posición final del modal */
+}
+
+.modal.hide {
+    transform: translateY(100%); /* Posición inicial, oculto en la parte inferior */
 }
 
 .title {
-    font-size: 32px;
-}
-
-input, textarea {
-    border-radius: 8px;
-    border: 1px solid #cccccc;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
     color: #333333;
-    padding: 0.4em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #eeeeee;
-    transition: border-color 0.25s;
 }
 
 .input {
-    padding-bottom: 0;
-    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.modalButton {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-family: inherit;
-    font-weight: 500;
-    background-color: rgb(90, 180, 123);
-    cursor: pointer;
-    transition: border-color 0.25s;
+.input label {
+    font-size: 14px;
+    color: #666666;
 }
 
-.cancelButton {
-    background-color: rgb(230, 104, 104);
+input[type="text"], input[type="date"], input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    color: #333333;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="date"]:focus, input[type="email"]:focus {
+    border-color: #66afe9;
 }
 
 .buttons {
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    margin-top: 10px;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.modalButton {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modalButton:not(.cancelButton) {
+    background-color: #5ab47b; /* Verde para el botón de registro */
+}
+
+.cancelButton {
+    background-color: #e66868; /* Rojo para el botón de cancelar */
+}
+
+.modalButton.deleteButton {
+    background-color: #e66868; /* Rojo para el botón de eliminación */
+}
+
+.modalButton:hover {
+    opacity: 0.9;
 }
