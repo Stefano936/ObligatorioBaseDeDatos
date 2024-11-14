@@ -2,46 +2,36 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 50px;
+    padding-right: 70px;
     background-color: #f8f9fa;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: skyblue;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 1em;
-    font-family: inherit;
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-th, td {
-    padding: 12px 15px;
-    text-align: center;
+.claseCard {
+    border-radius: 8px;
     border: 1px solid #cccccc;
-}
-
-th {
-    background-color: skyblue;
-    color: #ffffff;
-    font-weight: 600;
-}
-
-tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-
-td:hover {
-    background-color: #e0f7fa;
-}
-
-td {
+    padding: 0.6em 1.2em;
+    font-size: 1em;
     font-weight: 500;
+    font-family: inherit;
+    background-color: #eeeeee;
+    cursor: pointer;
+    margin: 5px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.25s;
 }
 
+.claseInfo {
+    flex-grow: 1;
+}
+
+.claseButtons {
+    display: flex;
+    gap: 10px;
+}
