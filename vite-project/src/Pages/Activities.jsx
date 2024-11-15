@@ -8,18 +8,19 @@ function Activities() {
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [selectedEquipment, setSelectedEquipment] = useState([]);
   const [selectedTurno, setSelectedTurno] = useState(null);
+  const [clases, setClases] = useState([]);
 
   const handleActivityChange = (event) => {
     const activity = activities.find(act => act.descripcion === event.target.value);
     setSelectedActivity(activity);
   };
 
-  const handleEquipmentChange = (event) => {
-    const { value, checked } = event.target;
+  const handleEquipmentChange = (event, equip) => {
+    const { checked } = event.target;
     if (checked) {
-      setSelectedEquipment([...selectedEquipment, value]);
+      setSelectedEquipment([...selectedEquipment, equip.id]);
     } else {
-      setSelectedEquipment(selectedEquipment.filter(equip => equip !== value));
+      setSelectedEquipment(selectedEquipment.filter(id => id !== equip.id));
     }
   };
 
@@ -65,6 +66,49 @@ function Activities() {
     fetchData();
   }, []);
 
+  const handleInscribirse = async () => {
+    const clasesResponse = await fetch('http://localhost:8000/clases');
+    const clasesData = await clasesResponse.json();
+    setClases(clasesData);
+
+    console.log(clasesData);
+
+    const filteredClases = clasesData.filter(clase => clase.id_actividad === selectedActivity.id && clase.id_turno === selectedTurno.id);
+    console.log(filteredClases);
+    const inscripcionBase = {
+      id_clase: filteredClases[0].id,
+      ci: localStorage.getItem('ci_alumno'),
+    };
+
+    console.log(selectedEquipment);
+    for (const equipamiento of selectedEquipment) {
+      console.log(equipamiento)
+      const inscripcion = {
+        ...inscripcionBase,
+        id_equipamiento: equipamiento,
+      };
+
+      console.log(inscripcion);
+
+      await fetch('http://localhost:8000/alumnosclase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(inscripcion),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+
+    console.log('Inscripción realizada con éxito');
+  }
+
   return (
     <div>
       <div className={styles.activitiesContainer}>
@@ -91,7 +135,7 @@ function Activities() {
                   id={`equipamiento-${index}`}
                   name="equipamiento"
                   value={equip.descripcion}
-                  onChange={handleEquipmentChange}
+                  onChange={(event) => handleEquipmentChange(event, equip)}
                 />
                 <label htmlFor={`equipamiento-${index}`}>
                   {equip.descripcion} - ${equip.costo}
@@ -115,6 +159,9 @@ function Activities() {
       <div className={styles.totalCostContainer}>
         <h2>Costo Total</h2>
         <p>{calculateTotalCost()}</p>
+      </div>
+      <div>
+        <button onClick={handleInscribirse}>Inscribirse</button>
       </div>
     </div>
   );
