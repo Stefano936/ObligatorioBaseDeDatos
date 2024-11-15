@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from '../Styles/Login.module.css';
 
 function Login() {
   const [error, setError] = useState('')
 
+  const navigate = useNavigate();
+
   const validateForm = (e) => {
-    if (!e.target.email.value || !e.target.password.value) {
+    if (!e.target.ci.value || !e.target.password.value) {
       return 'Por favor, completa todos los campos';
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    /* const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(e.target.email.value)) {
       return 'Ingresa un email válido';
-    }
+    } */
     if (e.target.password.value.length < 6) {
       return 'La contraseña debe tener al menos 6 caracteres';
     }
@@ -26,20 +29,32 @@ function Login() {
       return alert(validationError);
     }
 
-    let data = {email: e.target.email.value, password: e.target.password.value}
-    login(data).then((res) => {
-      if (res.error) {
-        setError(res.error);
-        return alert(res.error);
-      } else {
-        let {_id, token } = res
-        document.cookie = `token=${token}; max-age=3600; path=/`;
+    let data = {ci: e.target.ci.value, contraseña: e.target.password.value};
 
-        window.location.href = '/feed';
-      }}).catch((error) => {
-        setError('An unexpected error occurred');
-        alert('An unexpected error occurred');
+    fetch('http://localhost:8000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Invalid CI or password');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Login successful');
+      navigate('/inscripciones');
+      localStorage.setItem('ci_alumno', e.target.ci.value);
+    })
+    .catch(error => {
+      setError(error.message);
+      alert(error.message);
     });
+
+
   }
 
   return (
@@ -55,9 +70,9 @@ function Login() {
       <h1 className={styles.title}>Inicia Sesión</h1>
       <form className={styles.login_form} onSubmit={handleSubmit}>
         <input
-          type="email"
-          placeholder="email"
-          id="email"
+          type="text"
+          placeholder="cédula..."
+          id="ci"
           className={styles.login_input}
         />
         <br />
