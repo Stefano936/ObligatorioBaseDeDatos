@@ -17,11 +17,17 @@ function Activities() {
 
   const handleEquipmentChange = (event, equip) => {
     const { checked } = event.target;
-    if (checked) {
-      setSelectedEquipment([...selectedEquipment, equip.id]);
-    } else {
-      setSelectedEquipment(selectedEquipment.filter(id => id !== equip.id));
-    }
+    console.log('Checked:', checked);
+    console.log('Before update:', selectedEquipment);
+
+    setSelectedEquipment(prevSelectedEquipment => {
+      const newSelectedEquipment = checked 
+        ? [...prevSelectedEquipment, equip.id] 
+        : prevSelectedEquipment.filter(id => id !== equip.id);
+
+      console.log('After update:', newSelectedEquipment);
+      return newSelectedEquipment;
+    });
   };
 
   const handleTurnoChange = (event) => {
@@ -34,8 +40,8 @@ function Activities() {
     if (selectedActivity) {
       totalCost += selectedActivity.costo;
     }
-    selectedEquipment.forEach(equipDesc => {
-      const equip = equipamiento.find(eq => eq.descripcion === equipDesc);
+    selectedEquipment.forEach(equipId => {
+      const equip = equipamiento.find(eq => eq.id === equipId);
       if (equip) {
         totalCost += equip.costo;
       }
@@ -114,7 +120,7 @@ function Activities() {
 
     console.log('Inscripción realizada con éxito');
   }
-
+    
   return (
     <div>
       <div className={styles.activitiesContainer}>
