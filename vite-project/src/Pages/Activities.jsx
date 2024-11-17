@@ -77,7 +77,7 @@ function Activities() {
     console.log(filteredClases);
 
     if (filteredClases.length === 0) {
-      console.log('No hay clases disponibles');
+      alert('No hay clases disponibles');
       return;
     }
 

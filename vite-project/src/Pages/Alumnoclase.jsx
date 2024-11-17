@@ -5,7 +5,6 @@ import AgregarAlumnoClaseModal from '../components/AgregarAlumnoClaseModal/Agreg
 function Alumnoclase() {
   const [alumnosClase, setAlumnosClase] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedAlumnoClase, setSelectedAlumnoClase] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -21,12 +20,7 @@ function Alumnoclase() {
     }
   };
 
-  const handleEdit = (alumnoClase) => {
-    setSelectedAlumnoClase(alumnoClase);
-    setShowModal(true);
-  };
-
-  const handleDelete = async (id_clase, ci,id_equipamiento ) => {
+  const handleDelete = async (id_clase, ci, id_equipamiento) => {
     try {
       await fetch(`http://localhost:8000/alumnosclase/${id_clase}/${ci}/${id_equipamiento}/`, { method: 'DELETE' });
       fetchData();
@@ -36,7 +30,6 @@ function Alumnoclase() {
   };
 
   const handleAdd = () => {
-    setSelectedAlumnoClase(null);
     setShowModal(true);
   };
 
@@ -50,7 +43,6 @@ function Alumnoclase() {
             <div>Clase ID: {alumno.id_clase}</div>
             <div>CI: {alumno.ci}</div>
             <div>Equipamiento ID: {alumno.id_equipamiento}</div>
-            <button onClick={() => handleEdit(alumno)}>Editar</button>
             <button onClick={() => handleDelete(alumno.id_clase, alumno.ci, alumno.id_equipamiento)}>Eliminar</button>
           </li>
         ))}
@@ -59,7 +51,6 @@ function Alumnoclase() {
         <AgregarAlumnoClaseModal
           closeModal={() => setShowModal(false)}
           fetchData={fetchData}
-          alumnoClase={selectedAlumnoClase}
         />
       )}
     </div>
