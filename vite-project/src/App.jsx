@@ -9,6 +9,7 @@ import Horarios from './Pages/Horarios';
 import Clases from './Pages/Clases';
 import Actividades from './Pages/Actividades';
 import './App.css';
+import Alumnoclase from './Pages/Alumnoclase';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/equipamiento" element={<Equipamiento />} /> // Accede solo admin para modificar eso
         <Route path="/horarios" element={<Horarios />} /> // Accede solo admin para modificar eso
         <Route path="/clases" element={<Clases />} /> // Accede solo admin para modificar eso
+        <Route path="/alumnosclase" element={<Alumnoclase/>} />
       </Routes>
     </Router>
   );

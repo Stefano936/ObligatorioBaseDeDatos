@@ -75,6 +75,12 @@ function Activities() {
 
     const filteredClases = clasesData.filter(clase => clase.id_actividad === selectedActivity.id && clase.id_turno === selectedTurno.id);
     console.log(filteredClases);
+
+    if (filteredClases.length === 0) {
+      console.log('No hay clases disponibles');
+      return;
+    }
+
     const inscripcionBase = {
       id_clase: filteredClases[0].id,
       ci: localStorage.getItem('ci_alumno'),
