@@ -4,7 +4,9 @@ import AgregarAlumnoClaseModal from '../components/AgregarAlumnoClaseModal/Agreg
 
 function Alumnoclase() {
   const [alumnosClase, setAlumnosClase] = useState([]);
+  const [actividades, setActividades] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [actividadCount, setActividadCount] = useState({});
 
   useEffect(() => {
     fetchData();
@@ -12,12 +14,26 @@ function Alumnoclase() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:8000/alumnosclase');
-      const data = await response.json();
-      setAlumnosClase(data);
+      const [alumnosResponse, actividadesResponse] = await Promise.all([
+        fetch('http://localhost:8000/alumnosclase'),
+        fetch('http://localhost:8000/actividades')
+      ]);
+      const alumnosData = await alumnosResponse.json();
+      const actividadesData = await actividadesResponse.json();
+      setAlumnosClase(alumnosData);
+      setActividades(actividadesData);
+      calculateActividadCount(alumnosData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+  };
+
+  const calculateActividadCount = (data) => {
+    const count = data.reduce((acc, alumno) => {
+      acc[alumno.id_clase] = (acc[alumno.id_clase] || 0) + 1;
+      return acc;
+    }, {});
+    setActividadCount(count);
   };
 
   const handleDelete = async (id_clase, ci, id_equipamiento) => {
@@ -33,10 +49,25 @@ function Alumnoclase() {
     setShowModal(true);
   };
 
+  const sortedActividadCount = Object.entries(actividadCount).sort((a, b) => b[1] - a[1]);
+
   return (
     <div className={styles.alumnosClaseContainer}>
       <h2>Alumnos Clase</h2>
       <button onClick={handleAdd}>Agregar Alumno Clase</button>
+      <div className={styles.actividadCount}>
+        <h3>Actividades con más alumnos:</h3>
+        <ul>
+          {sortedActividadCount.map(([id_clase, count]) => {
+            const actividad = actividades.find(act => act.id === parseInt(id_clase));
+            return (
+              <li key={id_clase}>
+                Actividad: {actividad ? actividad.descripcion : 'Desconocida'} - Alumnos: {count}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       <ul>
         {alumnosClase.map((alumno) => (
           <li key={alumno.id} className={styles.alumnoClaseCard}>
