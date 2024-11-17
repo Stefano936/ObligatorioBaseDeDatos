@@ -20,8 +20,26 @@ const AgregarAlumnoModal = ({ closeModal, fetchData, student }) => {
         }
     }, [student]);
 
+    const calculateAge = (birthdate) => {
+        const today = new Date();
+        const birthDate = new Date(birthdate);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        const age = calculateAge(fecha_nacimiento);
+        if (age < 18) {
+            alert('User must be at least 18 years old.');
+            return;
+        }
+
         const method = student ? 'PUT' : 'POST';
         const url = student ? `http://localhost:8000/alumnos/${student.ci}` : 'http://localhost:8000/alumnos';
 
