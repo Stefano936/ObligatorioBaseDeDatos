@@ -16,13 +16,36 @@ const AgregarClaseModal = ({ closeModal, fetchData, clase }) => {
         }
     }, [clase]);
 
-    const handleSubmit = (e) => {
+    const fetchInstructorInscriptions = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/clases`);
+            const data = await response.json();
+            console.log(data);
+            console.log(ciInstructor);
+            console.log(idTurno);
+            const filteredData = data.filter(inscripcion => inscripcion.ci_instructor == ciInstructor && inscripcion.id_turno == idTurno);
+            console.log(filteredData);
+            return filteredData;
+        } catch (error) {
+            console.error('Error fetching instructor inscriptions:', error);
+            return [];
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        const existingInscriptions = await fetchInstructorInscriptions();
+        if (existingInscriptions.length > 0) {
+            alert('El instructor ya está dictando una actividad en este horario.');
+            return;
+        }
+
         const method = clase ? 'PUT' : 'POST';
         const url = clase ? `http://localhost:8000/clases/${clase.id}` : 'http://localhost:8000/clases';
 
         fetch(url, {
             method,
+            //mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json'
             },

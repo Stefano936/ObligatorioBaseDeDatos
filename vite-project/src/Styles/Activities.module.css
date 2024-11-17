@@ -155,3 +155,33 @@ option {
 option:hover {
   background-color: #f1f1f1;
 }
+
+.userInscriptionsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: skyblue;
+  margin-top: 20px;
+}
+
+.userInscriptionsContainer h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: black;
+}
+
+.userInscriptionsContainer ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.userInscriptionsContainer li {
+  font-size: 1rem;
+  margin: 5px 0;
+  color: black;
+}

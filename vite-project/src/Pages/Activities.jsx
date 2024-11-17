@@ -9,6 +9,8 @@ function Activities() {
   const [selectedEquipment, setSelectedEquipment] = useState([]);
   const [selectedTurno, setSelectedTurno] = useState(null);
   const [clases, setClases] = useState([]);
+  const [userInscriptions, setUserInscriptions] = useState([]);
+  const [ci, setCi] = useState(localStorage.getItem('ci_alumno'));
 
   const handleActivityChange = (event) => {
     const activity = activities.find(act => act.descripcion === event.target.value);
@@ -49,13 +51,27 @@ function Activities() {
     return totalCost;
   };
 
+  const fetchUserInscriptions = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/alumnosclase`);
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
+      const datafiltrada = data.filter(inscripcion => inscripcion.ci === ci);
+      setUserInscriptions(datafiltrada);
+      console.log(datafiltrada);
+    } catch (error) {
+      console.error('Error fetching user inscriptions:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const activitiesResponse = await fetch('http://localhost:8000/actividades');
         const activitiesData = await activitiesResponse.json();
         setActivities(activitiesData);
-  
+
         const equipamientoResponse = await fetch('http://localhost:8000/equipamiento');
         const equipamientoData = await equipamientoResponse.json();
         setEquipamiento(equipamientoData);
@@ -64,11 +80,12 @@ function Activities() {
         const turnosData = await turnosResponse.json();
         setTurnos(turnosData);
 
+        await fetchUserInscriptions(); 
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -89,7 +106,7 @@ function Activities() {
 
     const inscripcionBase = {
       id_clase: filteredClases[0].id,
-      ci: localStorage.getItem('ci_alumno'),
+      ci: ci,
     };
 
     console.log(selectedEquipment);
@@ -119,10 +136,11 @@ function Activities() {
     }
 
     console.log('Inscripción realizada con éxito');
+    await fetchUserInscriptions(); 
   }
-    
+
   return (
-    <div>
+    <div className={styles.activitiesPage}>
       <div className={styles.activitiesContainer}>
         <h2>Actividades</h2>
         <div>
@@ -174,6 +192,16 @@ function Activities() {
       </div>
       <div>
         <button onClick={handleInscribirse}>Inscribirse</button>
+      </div>
+      <div className={styles.userInscriptionsContainer}>
+        <h2>Mis Inscripciones</h2>
+        <ul>
+          {userInscriptions.map((inscription, index) => (
+            <li key={index}>
+              Clase ID: {inscription.id_clase}, Equipamiento ID: {inscription.id_equipamiento}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
