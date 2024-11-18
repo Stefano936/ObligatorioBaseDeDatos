@@ -9,6 +9,8 @@ function Activities() {
   const [selectedEquipment, setSelectedEquipment] = useState([]);
   const [selectedTurno, setSelectedTurno] = useState(null);
   const [clases, setClases] = useState([]);
+  const [userInscriptions, setUserInscriptions] = useState([]);
+  const [ci, setCi] = useState(localStorage.getItem('ci_alumno'));
 
   const handleActivityChange = (event) => {
     const activity = activities.find(act => act.descripcion === event.target.value);
@@ -17,11 +19,17 @@ function Activities() {
 
   const handleEquipmentChange = (event, equip) => {
     const { checked } = event.target;
-    if (checked) {
-      setSelectedEquipment([...selectedEquipment, equip.id]);
-    } else {
-      setSelectedEquipment(selectedEquipment.filter(id => id !== equip.id));
-    }
+    console.log('Checked:', checked);
+    console.log('Before update:', selectedEquipment);
+
+    setSelectedEquipment(prevSelectedEquipment => {
+      const newSelectedEquipment = checked 
+        ? [...prevSelectedEquipment, equip.id] 
+        : prevSelectedEquipment.filter(id => id !== equip.id);
+
+      console.log('After update:', newSelectedEquipment);
+      return newSelectedEquipment;
+    });
   };
 
   const handleTurnoChange = (event) => {
@@ -34,13 +42,43 @@ function Activities() {
     if (selectedActivity) {
       totalCost += selectedActivity.costo;
     }
-    selectedEquipment.forEach(equipDesc => {
-      const equip = equipamiento.find(eq => eq.descripcion === equipDesc);
+    selectedEquipment.forEach(equipId => {
+      const equip = equipamiento.find(eq => eq.id === equipId);
       if (equip) {
         totalCost += equip.costo;
       }
     });
     return totalCost;
+  };
+
+  const fetchAlumnoInscriptions = async () => {
+    try {
+        const response = await fetch("http://localhost:8000/alumnosclase");
+        const data = await response.json();
+        console.log(data);
+        console.log(ci);
+        console.log(selectedTurno);
+        const filteredData = data.filter(inscripcion => inscripcion.ci == ci && inscripcion.id_turno == selectedTurno);
+        console.log(filteredData);
+        return filteredData;
+    } catch (error) {
+        console.error('Error fetching instructor inscriptions:', error);
+        return [];
+    }
+}; 
+
+  const fetchUserInscriptions = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/alumnosclase`);
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
+      const datafiltrada = data.filter(inscripcion => inscripcion.ci === ci);
+      setUserInscriptions(datafiltrada);
+      console.log(datafiltrada);
+    } catch (error) {
+      console.error('Error fetching user inscriptions:', error);
+    }
   };
 
   useEffect(() => {
@@ -49,7 +87,7 @@ function Activities() {
         const activitiesResponse = await fetch('http://localhost:8000/actividades');
         const activitiesData = await activitiesResponse.json();
         setActivities(activitiesData);
-  
+
         const equipamientoResponse = await fetch('http://localhost:8000/equipamiento');
         const equipamientoData = await equipamientoResponse.json();
         setEquipamiento(equipamientoData);
@@ -58,15 +96,21 @@ function Activities() {
         const turnosData = await turnosResponse.json();
         setTurnos(turnosData);
 
+        await fetchUserInscriptions(); 
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-  
+
     fetchData();
   }, []);
 
   const handleInscribirse = async () => {
+    const existingInscriptions = await fetchAlumnoInscriptions();
+        if (existingInscriptions.length > 0) {
+            alert('El alumno ya está inscripto en una actividad en este horario.');
+            return;
+        }
     const clasesResponse = await fetch('http://localhost:8000/clases');
     const clasesData = await clasesResponse.json();
     setClases(clasesData);
@@ -83,7 +127,7 @@ function Activities() {
 
     const inscripcionBase = {
       id_clase: filteredClases[0].id,
-      ci: localStorage.getItem('ci_alumno'),
+      ci: ci,
     };
 
     console.log(selectedEquipment);
@@ -113,10 +157,11 @@ function Activities() {
     }
 
     console.log('Inscripción realizada con éxito');
+    await fetchUserInscriptions(); 
   }
 
   return (
-    <div>
+    <div className={styles.activitiesPage}>
       <div className={styles.activitiesContainer}>
         <h2>Actividades</h2>
         <div>
@@ -168,6 +213,16 @@ function Activities() {
       </div>
       <div>
         <button onClick={handleInscribirse}>Inscribirse</button>
+      </div>
+      <div className={styles.userInscriptionsContainer}>
+        <h2>Mis Inscripciones</h2>
+        <ul>
+          {userInscriptions.map((inscription, index) => (
+            <li key={index}>
+              Clase ID: {inscription.id_clase}, Equipamiento ID: {inscription.id_equipamiento}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

@@ -19,6 +19,7 @@ const AgregarActividadModal = ({ closeModal, fetchData, actividad }) => {
 
         fetch(url, {
             method,
+            //Agregar esto en caso de que no funcione mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json'
             },
