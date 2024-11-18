@@ -51,6 +51,22 @@ function Activities() {
     return totalCost;
   };
 
+  const fetchAlumnoInscriptions = async () => {
+    try {
+        const response = await fetch("http://localhost:8000/alumnosclase");
+        const data = await response.json();
+        console.log(data);
+        console.log(ci);
+        console.log(selectedTurno);
+        const filteredData = data.filter(inscripcion => inscripcion.ci == ci && inscripcion.id_turno == selectedTurno);
+        console.log(filteredData);
+        return filteredData;
+    } catch (error) {
+        console.error('Error fetching instructor inscriptions:', error);
+        return [];
+    }
+}; 
+
   const fetchUserInscriptions = async () => {
     try {
       const response = await fetch(`http://localhost:8000/alumnosclase`);
@@ -90,6 +106,11 @@ function Activities() {
   }, []);
 
   const handleInscribirse = async () => {
+    const existingInscriptions = await fetchAlumnoInscriptions();
+        if (existingInscriptions.length > 0) {
+            alert('El alumno ya está inscripto en una actividad en este horario.');
+            return;
+        }
     const clasesResponse = await fetch('http://localhost:8000/clases');
     const clasesData = await clasesResponse.json();
     setClases(clasesData);
