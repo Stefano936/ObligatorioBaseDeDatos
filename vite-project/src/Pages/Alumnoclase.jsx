@@ -5,8 +5,10 @@ import AgregarAlumnoClaseModal from '../components/AgregarAlumnoClaseModal/Agreg
 function Alumnoclase() {
   const [alumnosClase, setAlumnosClase] = useState([]);
   const [actividades, setActividades] = useState([]);
+  const [equipamientos, setEquipamientos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [actividadCount, setActividadCount] = useState({});
+  const [actividadIngresos, setActividadIngresos] = useState({});
 
   useEffect(() => {
     fetchData();
@@ -14,15 +16,19 @@ function Alumnoclase() {
 
   const fetchData = async () => {
     try {
-      const [alumnosResponse, actividadesResponse] = await Promise.all([
+      const [alumnosResponse, actividadesResponse, equipamientosResponse] = await Promise.all([
         fetch('http://localhost:8000/alumnosclase'),
-        fetch('http://localhost:8000/actividades')
+        fetch('http://localhost:8000/actividades'),
+        fetch('http://localhost:8000/equipamiento')
       ]);
       const alumnosData = await alumnosResponse.json();
       const actividadesData = await actividadesResponse.json();
+      const equipamientosData = await equipamientosResponse.json();
       setAlumnosClase(alumnosData);
       setActividades(actividadesData);
+      setEquipamientos(equipamientosData);
       calculateActividadCount(alumnosData);
+      calculateActividadIngresos(alumnosData, actividadesData, equipamientosData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -34,6 +40,29 @@ function Alumnoclase() {
       return acc;
     }, {});
     setActividadCount(count);
+  };
+
+  const calculateActividadIngresos = (alumnosData, actividadesData, equipamientosData) => {
+    const ingresos = alumnosData.reduce((acc, alumno) => {
+      const key = `${alumno.id_clase}-${alumno.ci}`;
+      if (!acc[key]) {
+        const actividad = actividadesData.find(a => a.id === alumno.id_clase);
+        const costoActividad = actividad ? actividad.costo : 0;
+        acc[key] = costoActividad;
+      }
+      const equipamiento = equipamientosData.find(e => e.id === alumno.id_equipamiento);
+      const costoEquipamiento = equipamiento ? equipamiento.costo : 0;
+      acc[key] += costoEquipamiento;
+      return acc;
+    }, {});
+    
+    const ingresosPorClase = Object.entries(ingresos).reduce((acc, [key, totalCosto]) => {
+      const [id_clase] = key.split('-');
+      acc[id_clase] = (acc[id_clase] || 0) + totalCosto;
+      return acc;
+    }, {});
+    
+    setActividadIngresos(ingresosPorClase);
   };
 
   const handleDelete = async (id_clase, ci, equipamientos) => {
@@ -52,6 +81,7 @@ function Alumnoclase() {
   };
 
   const sortedActividadCount = Object.entries(actividadCount).sort((a, b) => b[1] - a[1]);
+  const sortedActividadIngresos = Object.entries(actividadIngresos).sort((a, b) => b[1] - a[1]);
 
   const groupedAlumnos = alumnosClase.reduce((acc, alumno) => {
     const key = `${alumno.id_clase}-${alumno.ci}`;
@@ -74,6 +104,19 @@ function Alumnoclase() {
             return (
               <li key={id_clase}>
                 Actividad: {actividad ? actividad.descripcion : 'Desconocida'} - Alumnos: {count}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <div className={styles.actividadIngresos}>
+        <h3>Actividad que más ingresos genera:</h3>
+        <ul>
+          {sortedActividadIngresos.slice(0, 1).map(([id_clase, ingresos]) => {
+            const actividad = actividades.find(act => act.id === parseInt(id_clase));
+            return (
+              <li key={id_clase}>
+                Actividad: {actividad ? actividad.descripcion : 'Desconocida'} - Ingresos: ${ingresos}
               </li>
             );
           })}
