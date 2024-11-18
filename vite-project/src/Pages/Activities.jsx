@@ -19,15 +19,10 @@ function Activities() {
 
   const handleEquipmentChange = (event, equip) => {
     const { checked } = event.target;
-    console.log('Checked:', checked);
-    console.log('Before update:', selectedEquipment);
-
     setSelectedEquipment(prevSelectedEquipment => {
       const newSelectedEquipment = checked 
-        ? [...prevSelectedEquipment, equip.id] 
-        : prevSelectedEquipment.filter(id => id !== equip.id);
-
-      console.log('After update:', newSelectedEquipment);
+        ? [...prevSelectedEquipment, equip] 
+        : prevSelectedEquipment.filter(e => e.id !== equip.id);
       return newSelectedEquipment;
     });
   };
@@ -42,11 +37,8 @@ function Activities() {
     if (selectedActivity) {
       totalCost += selectedActivity.costo;
     }
-    selectedEquipment.forEach(equipId => {
-      const equip = equipamiento.find(eq => eq.id === equipId);
-      if (equip) {
-        totalCost += equip.costo;
-      }
+    selectedEquipment.forEach(equip => {
+      totalCost += equip.costo;
     });
     return totalCost;
   };
@@ -55,27 +47,20 @@ function Activities() {
     try {
         const response = await fetch("http://localhost:8000/alumnosclase");
         const data = await response.json();
-        console.log(data);
-        console.log(ci);
-        console.log(selectedTurno);
         const filteredData = data.filter(inscripcion => inscripcion.ci == ci && inscripcion.id_turno == selectedTurno);
-        console.log(filteredData);
         return filteredData;
     } catch (error) {
         console.error('Error fetching instructor inscriptions:', error);
         return [];
     }
-}; 
+  }; 
 
   const fetchUserInscriptions = async () => {
     try {
       const response = await fetch(`http://localhost:8000/alumnosclase`);
-      console.log(response);
       const data = await response.json();
-      console.log(data);
       const datafiltrada = data.filter(inscripcion => inscripcion.ci === ci);
       setUserInscriptions(datafiltrada);
-      console.log(datafiltrada);
     } catch (error) {
       console.error('Error fetching user inscriptions:', error);
     }
@@ -107,18 +92,15 @@ function Activities() {
 
   const handleInscribirse = async () => {
     const existingInscriptions = await fetchAlumnoInscriptions();
-        if (existingInscriptions.length > 0) {
-            alert('El alumno ya está inscripto en una actividad en este horario.');
-            return;
-        }
+    if (existingInscriptions.length > 0) {
+        alert('El alumno ya está inscripto en una actividad en este horario.');
+        return;
+    }
     const clasesResponse = await fetch('http://localhost:8000/clases');
     const clasesData = await clasesResponse.json();
     setClases(clasesData);
 
-    console.log(clasesData);
-
     const filteredClases = clasesData.filter(clase => clase.id_actividad === selectedActivity.id && clase.id_turno === selectedTurno.id);
-    console.log(filteredClases);
 
     if (filteredClases.length === 0) {
       alert('No hay clases disponibles');
@@ -130,15 +112,11 @@ function Activities() {
       ci: ci,
     };
 
-    console.log(selectedEquipment);
-    for (const equipamiento of selectedEquipment) {
-      console.log(equipamiento)
+    for (const equip of selectedEquipment) {
       const inscripcion = {
         ...inscripcionBase,
-        id_equipamiento: equipamiento,
+        id_equipamiento: equip.id,
       };
-
-      console.log(inscripcion);
 
       await fetch('http://localhost:8000/alumnosclase', {
         method: 'POST',
@@ -156,9 +134,26 @@ function Activities() {
         });
     }
 
-    console.log('Inscripción realizada con éxito');
     await fetchUserInscriptions(); 
   }
+
+  const groupInscriptionsByClass = (inscriptions) => {
+    const grouped = inscriptions.reduce((acc, inscription) => {
+      const { id_clase, id_equipamiento } = inscription;
+      if (!acc[id_clase]) {
+        acc[id_clase] = [];
+      }
+      acc[id_clase].push(id_equipamiento);
+      return acc;
+    }, {});
+
+    return Object.entries(grouped).map(([id_clase, equipamientos]) => ({
+      id_clase,
+      equipamientos,
+    }));
+  };
+
+  const groupedInscriptions = groupInscriptionsByClass(userInscriptions);
 
   return (
     <div className={styles.activitiesPage}>
@@ -217,9 +212,9 @@ function Activities() {
       <div className={styles.userInscriptionsContainer}>
         <h2>Mis Inscripciones</h2>
         <ul>
-          {userInscriptions.map((inscription, index) => (
+          {groupedInscriptions.map((group, index) => (
             <li key={index}>
-              Clase ID: {inscription.id_clase}, Equipamiento ID: {inscription.id_equipamiento}
+              Clase ID: {group.id_clase}, Equipamientos: {group.equipamientos.join(', ')}
             </li>
           ))}
         </ul>
