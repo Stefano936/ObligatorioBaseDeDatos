@@ -36,9 +36,11 @@ function Alumnoclase() {
     setActividadCount(count);
   };
 
-  const handleDelete = async (id_clase, ci, id_equipamiento) => {
+  const handleDelete = async (id_clase, ci, equipamientos) => {
     try {
-      await fetch(`http://localhost:8000/alumnosclase/${id_clase}/${ci}/${id_equipamiento}/`, { method: 'DELETE' });
+      await Promise.all(equipamientos.map(id_equipamiento =>
+        fetch(`http://localhost:8000/alumnosclase/${id_clase}/${ci}/${id_equipamiento}/`, { method: 'DELETE' })
+      ));
       fetchData();
     } catch (error) {
       console.error('Error deleting data:', error);
@@ -50,6 +52,15 @@ function Alumnoclase() {
   };
 
   const sortedActividadCount = Object.entries(actividadCount).sort((a, b) => b[1] - a[1]);
+
+  const groupedAlumnos = alumnosClase.reduce((acc, alumno) => {
+    const key = `${alumno.id_clase}-${alumno.ci}`;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(alumno.id_equipamiento);
+    return acc;
+  }, {});
 
   return (
     <div className={styles.alumnosClaseContainer}>
@@ -69,14 +80,17 @@ function Alumnoclase() {
         </ul>
       </div>
       <ul>
-        {alumnosClase.map((alumno) => (
-          <li key={alumno.id} className={styles.alumnoClaseCard}>
-            <div>Clase ID: {alumno.id_clase}</div>
-            <div>CI: {alumno.ci}</div>
-            <div>Equipamiento ID: {alumno.id_equipamiento}</div>
-            <button onClick={() => handleDelete(alumno.id_clase, alumno.ci, alumno.id_equipamiento)}>Eliminar</button>
-          </li>
-        ))}
+        {Object.entries(groupedAlumnos).map(([key, equipamientos]) => {
+          const [id_clase, ci] = key.split('-');
+          return (
+            <li key={key} className={styles.alumnoClaseCard}>
+              <div>Clase ID: {id_clase}</div>
+              <div>CI: {ci}</div>
+              <div>Equipamiento ID: {equipamientos.join(', ')}</div>
+              <button onClick={() => handleDelete(id_clase, ci, equipamientos)}>Eliminar</button>
+            </li>
+          );
+        })}
       </ul>
       {showModal && (
         <AgregarAlumnoClaseModal

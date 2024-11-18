@@ -39,22 +39,26 @@ const AgregarClaseModal = ({ closeModal, fetchData, clase }) => {
             alert('El instructor ya está dictando una actividad en este horario.');
             return;
         }
-
+    
         const method = clase ? 'PUT' : 'POST';
         const url = clase ? `http://localhost:8000/clases/${clase.id}` : 'http://localhost:8000/clases';
-
+    
         fetch(url, {
             method,
-            //mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 ci_instructor: ciInstructor,
-                id_actividad: idActividad,
-                id_turno: idTurno,
+                id_actividad: parseInt(idActividad, 10),
+                id_turno: parseInt(idTurno, 10),
                 dictada: dictada
             })
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
         }).then(() => {
             closeModal();
             fetchData();
