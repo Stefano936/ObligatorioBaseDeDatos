@@ -67,9 +67,9 @@ function Alumnoclase() {
       <h2>Alumnos Clase</h2>
       <button onClick={handleAdd}>Agregar Alumno Clase</button>
       <div className={styles.actividadCount}>
-        <h3>Actividades con más alumnos:</h3>
+        <h3>Actividad con más alumnos:</h3>
         <ul>
-          {sortedActividadCount.map(([id_clase, count]) => {
+          {sortedActividadCount.slice(0, 1).map(([id_clase, count]) => {
             const actividad = actividades.find(act => act.id === parseInt(id_clase));
             return (
               <li key={id_clase}>

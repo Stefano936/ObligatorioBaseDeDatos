@@ -45,6 +45,7 @@ const AgregarClaseModal = ({ closeModal, fetchData, clase }) => {
     
         fetch(url, {
             method,
+            //mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json'
             },
