@@ -11,6 +11,8 @@ function Activities() {
   const [clases, setClases] = useState([]);
   const [userInscriptions, setUserInscriptions] = useState([]);
   const [ci, setCi] = useState(JSON.parse(localStorage.getItem('user'))["ci"]);
+  const [classIdToUnsubscribe, setClassIdToUnsubscribe] = useState('');
+  const [equipmentIdToUnsubscribe, setEquipmentIdToUnsubscribe] = useState('');
 
   const handleActivityChange = (event) => {
     const activity = activities.find(act => act.descripcion === event.target.value);
@@ -140,6 +142,29 @@ function Activities() {
     await fetchUserInscriptions(); 
   }
 
+  const handleUnsubscribe = async () => {
+    if (!classIdToUnsubscribe || !ci || !equipmentIdToUnsubscribe) {
+      alert('Por favor, ingrese un ID de clase y un ID de equipamiento válidos.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/alumnosclase/${classIdToUnsubscribe}/${ci}/${equipmentIdToUnsubscribe}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        alert('Dado de baja exitosamente');
+        await fetchUserInscriptions();
+      } else {
+        const errorData = await response.json();
+        alert(`Error al dar de baja: ${errorData.message || 'Error desconocido'}`);
+      }
+    } catch (error) {
+      console.error('Error al dar de baja:', error);
+      alert(`Error al dar de baja: ${error.message}`);
+    }
+  };
+
   const groupInscriptionsByClass = (inscriptions) => {
     const grouped = inscriptions.reduce((acc, inscription) => {
       const { id_clase, id_equipamiento } = inscription;
@@ -221,6 +246,22 @@ function Activities() {
             </li>
           ))}
         </ul> 
+      </div>
+      <div className={styles.unsubscribeContainer}>
+        <h2>Darse de Baja</h2>
+        <input
+          type="text"
+          placeholder="ID de la clase"
+          value={classIdToUnsubscribe}
+          onChange={(e) => setClassIdToUnsubscribe(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="ID del equipamiento"
+          value={equipmentIdToUnsubscribe}
+          onChange={(e) => setEquipmentIdToUnsubscribe(e.target.value)}
+        />
+        <button onClick={handleUnsubscribe}>Darse de Baja</button>
       </div>
     </div>
   );
