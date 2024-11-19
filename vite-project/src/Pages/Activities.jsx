@@ -10,7 +10,7 @@ function Activities() {
   const [selectedTurno, setSelectedTurno] = useState(null);
   const [clases, setClases] = useState([]);
   const [userInscriptions, setUserInscriptions] = useState([]);
-  const [ci, setCi] = useState(localStorage.getItem('ci_alumno'));
+  const [ci, setCi] = useState(JSON.parse(localStorage.getItem('user'))["ci"]);
 
   const handleActivityChange = (event) => {
     const activity = activities.find(act => act.descripcion === event.target.value);
@@ -61,6 +61,9 @@ function Activities() {
       const data = await response.json();
       const datafiltrada = data.filter(inscripcion => inscripcion.ci === ci);
       setUserInscriptions(datafiltrada);
+      console.log('User inscriptions:', datafiltrada);
+      console.log(JSON.parse(localStorage.getItem('user'))["ci"]);
+      console.log('User inscriptions:', data);
     } catch (error) {
       console.error('Error fetching user inscriptions:', error);
     }
@@ -217,7 +220,7 @@ function Activities() {
               Clase ID: {group.id_clase}, Equipamientos: {group.equipamientos.join(', ')}
             </li>
           ))}
-        </ul>
+        </ul> 
       </div>
     </div>
   );
